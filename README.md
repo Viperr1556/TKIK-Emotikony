@@ -1,5 +1,3 @@
-# Przedmiot: Teoria kompilacji i kompilatory
-
 # EmoLang – Interpreter języka emotikonowego
 
 **Przedmiot:** Teoria kompilacji i kompilatory  
