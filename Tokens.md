@@ -1,23 +1,37 @@
-| Emotikon | Token Python | Opis / Działanie |
-| :---: | :--- | :--- |
-| 📦 | `=` | Przypisanie |
-| 🗣️ | `print()` | Wyświetlanie |
-| 🤔 | `if` | Jeśli |
-| 🧱 | `:` | Dwukropek (start bloku) |
-| 🔄 | `while` | Dopóki |
-| ➕ | `+` | Dodawanie |
-| ➖ | `-` | Odejmowanie |
-| ✖️ | `*` | Mnożenie |
-| ➗ | `/` | Dzielenie |
-| 📍 | `,` | Separator (przecinek) |
-| ✅ | `True` | Prawda |
-| ❌ | `False` | Fałsz |
-| 🔢 | `int()` | Integer (Liczba) |
-| 📉 | `float()` | Float (Przecinek) |
-| 🔤 | `str()` | String (Tekst) |
-| 💬 | `"` | Cudzysłów |
-| 🛑 | `break` | Koniec/Przerwanie |
+### Tabela Tokenów: EmoLang ➡️ Python
 
+Poniższa tabela zawiera kompletny zestaw symboli emotikonowych wykorzystywanych przez lekser EmoLang oraz ich bezpośrednie mapowanie na składnię lub zachowanie w języku Python.
+
+| Kategoria | Emotikon | Token Python | Opis / Działanie |
+| :--- | :---: | :--- | :--- |
+| **Typy i Wartości** | 📦 | `=` | Przypisanie (inicjalizacja zmiennej) |
+| | ✅ | `True` | Wartość logiczna: Prawda |
+| | ❌ | `False` | Wartość logiczna: Fałsz |
+| | 💬 | `"` | Cudzysłów (rozpoczęcie/zakończenie tekstu) |
+| | 🔢 | `int()` | Rzutowanie na liczbę całkowitą |
+| | 📉 | `float()` | Rzutowanie na liczbę zmiennoprzecinkową |
+| | 🔤 | `str()` | Rzutowanie na typ tekstowy |
+| **Wejście / Wyjście**| 📢 | `print()` | Wypisanie danych na standardowe wyjście |
+| | 📍 | `,` | Separator argumentów (np. przy wypisywaniu) |
+| **Arytmetyka** | ➕ | `+` | Operator dodawania |
+| | ➖ | `-` | Operator odejmowania |
+| | ✖️ | `*` | Operator mnożenia |
+| | ➗ | `/` | Operator dzielenia |
+| **Logika** | 🔀 | `or` | Alternatywa logiczna (LUB) |
+| | 🔗 | `and` | Koniunkcja logiczna (I) |
+| | 🚫 | `not` | Negacja logiczna (NIE) |
+| **Porównania** | ⚖️ | `==` | Równe |
+| | 💔 | `!=` | Różne |
+| | 👈 | `<` | Mniejsze niż |
+| | 👉 | `>` | Większe niż |
+| | 👈⚖️ | `<=` | Mniejsze lub równe |
+| | 👉⚖️ | `>=` | Większe lub równe |
+| **Struktura** | ❓ | `if` | Instrukcja warunkowa |
+| | 🔁 | `while` | Pętla (dopóki) |
+| | 🧱 | `:` | Rozpoczęcie bloku kodu (wymusza wcięcie poziomu niżej) |
+| | 🛑 | `end` | Zakończenie bloku kodu (powrót do wyższego wcięcia) |
+| | 🔚 | `\n` | Znak nowej linii / koniec bieżącej instrukcji |
+| | 🏁 | `exit()` | Zakończenie działania programu |
 
 | Element | Format / Znak | Opis i Zasady |
 | :--- | :--- | :--- |
