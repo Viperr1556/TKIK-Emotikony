@@ -1,43 +1,45 @@
-### Tabela Tokenów: EmoLang ➡️ Python
+### Tabela Tokenów: EmoLang ➡️ Specyfikacja Leksera
 
-Poniższa tabela zawiera kompletny zestaw symboli emotikonowych wykorzystywanych przez lekser EmoLang oraz ich bezpośrednie mapowanie na składnię lub zachowanie w języku Python.
-
-| Kategoria | Emotikon | Token Python | Opis / Działanie |
+| Kategoria | Symbol / Format | Token (PLY) | Opis / Działanie |
 | :--- | :---: | :--- | :--- |
-| **Typy i Wartości** | 📦 | `=` | Przypisanie (inicjalizacja zmiennej) |
-| | ✅ | `True` | Wartość logiczna: Prawda |
-| | ❌ | `False` | Wartość logiczna: Fałsz |
-| | 💬 | `"` | Cudzysłów (rozpoczęcie/zakończenie tekstu) |
-| | 🔢 | `int()` | Rzutowanie na liczbę całkowitą |
-| | 📉 | `float()` | Rzutowanie na liczbę zmiennoprzecinkową |
-| | 🔤 | `str()` | Rzutowanie na typ tekstowy |
-| **Wejście / Wyjście**| 📢 | `print()` | Wypisanie danych na standardowe wyjście |
-| | 📍 | `,` | Separator argumentów (np. przy wypisywaniu) |
-| **Arytmetyka** | ➕ | `+` | Operator dodawania |
-| | ➖ | `-` | Operator odejmowania |
-| | ✖️ | `*` | Operator mnożenia |
-| | ➗ | `/` | Operator dzielenia |
-| **Logika** | 🔀 | `or` | Alternatywa logiczna (LUB) |
-| | 🔗 | `and` | Koniunkcja logiczna (I) |
-| | 🚫 | `not` | Negacja logiczna (NIE) |
-| **Porównania** | ⚖️ | `==` | Równe |
-| | 💔 | `!=` | Różne |
-| | 👈 | `<` | Mniejsze niż |
-| | 👉 | `>` | Większe niż |
-| | 👈⚖️ | `<=` | Mniejsze lub równe |
-| | 👉⚖️ | `>=` | Większe lub równe |
-| **Struktura** | ❓ | `if` | Instrukcja warunkowa |
-| | 🔁 | `while` | Pętla (dopóki) |
-| | 🧱 | `:` | Rozpoczęcie bloku kodu (wymusza wcięcie poziomu niżej) |
-| | 🛑 | `end` | Zakończenie bloku kodu (powrót do wyższego wcięcia) |
-| | 🔚 | `\n` | Znak nowej linii / koniec bieżącej instrukcji |
-| | 🏁 | `exit()` | Zakończenie działania programu |
-
-| Element | Format / Znak | Opis i Zasady |
-| :--- | :--- | :--- |
-| **Zmienne (Identyfikatory)** | `[a-zA-Z_][a-zA-Z0-9_]*` | Nazwy zmiennych używają standardowych liter alfabetu, cyfr i znaku podkreślenia. Nie mogą zaczynać się od cyfry. (np. `licznik`, `moja_wartosc_2`). |
-| **Liczby surowe** | `[0-9]+` lub `[0-9]+\.[0-9]+` | Cyfry arabskie wpisywane bezpośrednio (np. `42`, `3.14`). Można je łączyć z 🔢 i 📉 w celu rzutowania typów. |
-| **Zawartość Stringów** | Zwykły tekst | Dowolne znaki i słowa wpisywane pomiędzy emotikonami cudzysłowu. (np. `💬 Witaj świecie! 💬`). |
-| **Nawiasy grupujące** | `(` oraz `)` | Standardowe nawiasy okrągłe do wymuszania kolejności wykonywania działań matematycznych lub logicznych. (np. `( 2 ➕ 2 ) ✖️ 2`). |
-| **Wcięcia (Indentation)** | Spacje lub Tabulatory | Białe znaki na początku linii. Po otwarciu bloku kodu emotikonem `🧱`, każda linia należąca do tego bloku musi być poprzedzona wcięciem (np. 4 spacje). |
-| **Komentarze** | `#` | Standardowy znak krzyżyka (hash). Wszystko od tego znaku do końca linii jest ignorowane przez interpreter. |
+| **Zmienne** | `[a-z_][a-z0-9_]*` | `ID` | Nazwa zmiennej (identyfikator) |
+| **Liczby** | `[0-9]+(\.[0-9]+)?` | `NUMBER` | Literał liczbowy (int/float) |
+| **Tekst** | Zawartość między 💬 | `STRING` | Literał tekstowy (String) |
+| **Typy i Wartości** | 📦 | `ASSIGN` | Operator przypisania |
+| | ✅ | `TRUE` | Wartość logiczna: Prawda |
+| | ❌ | `FALSE` | Wartość logiczna: Fałsz |
+| | 💬 | `QUOTE` | Ogranicznik tekstu |
+| | 🔢 | `INT_CAST` | Konwersja na liczbę całkowitą |
+| | 📉 | `FLOAT_CAST` | Konwersja na liczbę zmiennoprzecinkową |
+| | 🔤 | `STR_CAST` | Konwersja na typ tekstowy |
+| **Listy (Tablice)** | 📂 | `LBRACKET` | Otwarcie listy |
+| | 📁 | `RBRACKET` | Zamknięcie listy |
+| | 🎯 | `AT` | Dostęp do indeksu (indeksowanie) |
+| | 📏 | `LEN` | Pobranie długości (listy lub tekstu) |
+| | 🖇️ | `APPEND` | Metoda dopisywania do listy |
+| **Wejście / Wyjście**| 📢 | `PRINT` | Wypisanie na standardowe wyjście |
+| | 📥 | `INPUT` | Pobranie danych od użytkownika |
+| | 📍 | `COMMA` | Separator argumentów |
+| **Arytmetyka** | ➕ | `PLUS` | Dodawanie |
+| | ➖ | `MINUS` | Odejmowanie |
+| | ✖️ | `MULTIPLY` | Mnożenie |
+| | ➗ | `DIVIDE` | Dzielenie |
+| **Logika** | 🔀 | `OR` | Alternatywa logiczna |
+| | 🔗 | `AND` | Koniunkcja logiczna |
+| | 🚫 | `NOT` | Negacja logiczna |
+| **Porównania** | ⚖️ | `EQ` | Równe |
+| | 💔 | `NEQ` | Różne |
+| | 👈 | `LT` | Mniejsze niż |
+| | 👉 | `GT` | Większe niż |
+| | 👈⚖️ | `LE` | Mniejsze lub równe |
+| | 👉⚖️ | `GE` | Większe lub równe |
+| **Sterowanie** | ❓ | `IF` | Instrukcja warunkowa |
+| | 💡 | `ELSE` | Blok "w przeciwnym razie" |
+| | 🔁 | `WHILE` | Pętla (dopóki) |
+| | 🧱 | `LBRACE` | Rozpoczęcie bloku kodu |
+| | 🛑 | `RBRACE` | Zakończenie bloku kodu |
+| | 🔚 | `NEWLINE` | Koniec instrukcji (nowa linia) |
+| | 🏁 | `EXIT` | Zakończenie pracy interpretera |
+| **Techniczne** | `(` | `LPAREN` | Nawias otwierający |
+| | `)` | `RPAREN` | Nawias zamykający |
+| | `#` | `COMMENT` | Komentarz (ignorowany przez lekser) |
