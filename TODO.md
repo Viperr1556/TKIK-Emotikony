@@ -14,7 +14,7 @@
 ## 📦 Pliki pomocnicze
 
 * [ ] `requirements.txt` — zależności projektu
-* [ ] `README.md` — dokumentacja i instrukcja użycia
+* [x] `README.md` — dokumentacja i instrukcja użycia
 
 ---
 
