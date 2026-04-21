@@ -1,14 +1,31 @@
-# TODO - EmoLang
+# 🧠 EmoLang — TODO
 
-emoti_interpreter.py
-lexer.py
-parser.py
-ast_nodes.py
-interpreter.py
-environment.py
+## 📁 Struktura projektu
 
-requirements.txt
-README.md
+* [ ] `emoti_interpreter.py` — główny punkt wejścia
+* [ ] `lexer.py` — analiza leksykalna (tokenizacja emoji)
+* [ ] `parser.py` — parser (budowa AST)
+* [ ] `ast_nodes.py` — definicje węzłów AST
+* [ ] `interpreter.py` — wykonanie kodu
+* [ ] `environment.py` — zarządzanie zmiennymi i zakresem
 
-demo.emo
-examples/
+---
+
+## 📦 Pliki pomocnicze
+
+* [ ] `requirements.txt` — zależności projektu
+* [ ] `README.md` — dokumentacja i instrukcja użycia
+
+---
+
+## 🧪 Przykłady i demo
+
+* [ ] `demo.emo` — przykładowy program demonstracyjny
+* [ ] `examples/`
+
+  * [ ] dodać różne przykłady użycia języka
+  * [ ] pokryć podstawowe konstrukcje (zmienne, warunki, pętle)
+
+---
+
+
