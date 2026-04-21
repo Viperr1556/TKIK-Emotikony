@@ -3,8 +3,8 @@
 ## 📁 Struktura projektu
 
 * [ ] `emoti_interpreter.py` — główny punkt wejścia
-* [ ] `lexer.py` — analiza leksykalna (tokenizacja emoji)
-* [ ] `parser.py` — parser (budowa AST)
+* [x] `lexer.py` — analiza leksykalna (tokenizacja emoji)
+* [x] `parser.py` — parser (budowa AST)
 * [ ] `ast_nodes.py` — definicje węzłów AST
 * [ ] `interpreter.py` — wykonanie kodu
 * [ ] `environment.py` — zarządzanie zmiennymi i zakresem
