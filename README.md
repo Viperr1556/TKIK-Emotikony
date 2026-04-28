@@ -9,66 +9,63 @@
 
 ---
 
+# Dokumentacja Projektu: EmoLang
+
 ## 1. Założenia programu
 
 ### Ogólne cele programu
-**EmoLang** to interpreter języka dziedzinowego (DSL) z kategorii *esolangs*, w którym tradycyjna składnia tekstowa została zastąpiona zestawem symboli **Unicode (Emoji)**. Celem projektu jest stworzenie w pełni funkcjonalnego języka programowania opartego na piktogramach, obsługującego operacje arytmetyczne, logiczne, struktury sterujące (pętle, instrukcje warunkowe) oraz podstawowe struktury danych (listy).
+**EmoLang** to interpreter języka dziedzinowego (DSL) z kategorii *esolangs*, w którym tradycyjna składnia tekstowa została zastąpiona zestawem symboli **Unicode (Emoji)**. Celem projektu jest stworzenie kompletnego Turingowsko języka programowania, który mimo niekonwencjonalnej formy wizualnej, oferuje zaawansowane mechanizmy informatyczne, takie jak rekurencja, dynamiczne zarządzanie listami oraz izolowane zakresy zmiennych (scope).
 
 ### Charakterystyka techniczna
 * **Rodzaj translatora:** Interpreter.
-* **Planowany wynik działania:** Odczyt kodu źródłowego z plików z rozszerzeniem `.emo`, budowa drzewa składniowego (AST), a następnie bezpośrednie wykonanie instrukcji w środowisku Python z interakcją poprzez standardowe wejście/wyjście (konsolę).
-* **Język implementacji:** Python 3.10+.
-* **Sposób realizacji skanera i parsera:** Wykorzystanie generatora skanerów i parserów **PLY** (Python Lex-Yacc). Faza analizy leksykalnej identyfikuje poszczególne emoji, a parser LALR(1) buduje z nich drzewo AST w oparciu o zdefiniowaną gramatykę.
+* **Planowany wynik działania:** Odczyt kodu źródłowego z plików `.emo`, przeprowadzenie analizy leksykalnej i składniowej, budowa drzewa AST (Abstract Syntax Tree), a następnie wykonanie instrukcji w środowisku Python 3.10+.
+* **Język implementacji:** Python.
+* **Sposób realizacji skanera i parsera:** Wykorzystanie generatora **PLY (Python Lex-Yacc)**. Analiza składniowa oparta jest na parserze LALR(1).
 
 ---
 
 ## 2. Stosowane pakiety i narzędzia zewnętrzne
 
-Projekt został zrealizowany z naciskiem na minimalizację zależności zewnętrznych. Głównym i jedynym wymaganym pakietem zewnętrznym jest:
-* **PLY (Python Lex-Yacc)** – biblioteka implementująca narzędzia generacji analizatorów leksykalnych (lex) oraz składniowych (yacc) dla języka Python. Posłużyła do stworzenia modułów skanera i parsera.
-* **Moduł `sys` (wbudowany)** – używany do obsługi argumentów wiersza poleceń (przekazywanie ścieżki do pliku źródłowego).
+* **PLY (Python Lex-Yacc)** – biblioteka implementująca narzędzia `lex` i `yacc` dla Pythona.
+* **sys (wbudowany)** – obsługa parametrów wejściowych i strumieni systemowych.
+* **Typing (wbudowany)** – zapewnienie poprawności typowania struktur drzewa AST.
 
 ---
 
 ## 3. Opis tokenów
 
-Skaner języka EmoLang zamienia ciągi znaków (w tym piktogramy Unicode) na odpowiednie tokeny analizowane przez parser. Zestawienie tokenów przedstawia poniższa tabela:
+Skaner języka EmoLang przetwarza znaki Unicode na tokeny. Poniższa tabela przedstawia kluczowe symbole:
 
-| Kategoria | Symbol w kodzie | Token (PLY) | Opis / Działanie |
+| Kategoria | Symbol | Token (PLY) | Opis |
 | :--- | :---: | :--- | :--- |
-| **Identyfikatory** | `abc`, `wynik` | `ID` | Nazwa zmiennej (litery, cyfry, `_`) |
-| **Liczby** | `123`, `3.14` | `NUMBER` | Liczba całkowita lub zmiennoprzecinkowa |
-| **Tekst** | 💬...💬 | `STRING` | Literał tekstowy ograniczony dymkami |
+| **Identyfikatory** | `abc` | `ID` | Nazwa zmiennej lub funkcji |
+| **Liczby** | `123` | `NUMBER` | Liczba (int/float) |
+| **Tekst** | 💬...💬 | `STRING` | Literał tekstowy |
 | **Wartości logiczne**| ✅ / ❌ | `TRUE` / `FALSE` | Prawda / Fałsz |
-| **Rzutowanie typu** | 🔢 | `INT_CAST` | Konwersja na liczbę całkowitą |
-| | 📉 | `FLOAT_CAST` | Konwersja na liczbę zmiennoprzecinkową |
-| | 🔤 | `STR_CAST` | Konwersja na typ tekstowy |
-| **Operacje na Listach**| 📂 / 📁 | `LBRACKET` / `RBRACKET` | Otwarcie / zamknięcie definicji listy |
-| | 🎯 | `AT` | Dostęp do elementu przez indeks |
-| | 📏 | `LEN` | Pobranie długości listy lub tekstu |
-| | 🖇️ | `APPEND` | Dodanie elementu na koniec listy |
-| **Wejście / Wyjście** | 📢 | `PRINT` | Wypisanie danych na standardowe wyjście |
-| | 📥 | `INPUT` | Pobranie danych ze standardowego wejścia |
-| | 📍 | `COMMA` | Separator argumentów / elementów |
-| **Operatory** | 📦 | `ASSIGN` | Przypisanie wartości do zmiennej |
-| | ➕ ➖ ✖️ ➗ | `PLUS`, `MINUS`, `MULT`, `DIV` | Podstawowe operatory arytmetyczne |
+| **Operatory** | 📦 | `ASSIGN` | Przypisanie wartości |
+| | ➕ ➖ ✖️ ➗ | `PLUS`, `MINUS` itd. | Operacje arytmetyczne |
+| | ⚖️ 💔 👈 👉 | `EQ`, `NEQ`, `LT`, `GT` | Operatory porównania |
 | | 🔀 🔗 🚫 | `OR`, `AND`, `NOT` | Operatory logiczne |
-| | ⚖️ 💔 👈 👉 | `EQ`, `NEQ`, `LT`, `GT` | Operatory porównania (==, !=, <, >) |
 | **Sterowanie** | ❓ / 💡 | `IF` / `ELSE` | Instrukcja warunkowa |
 | | 🔁 | `WHILE` | Pętla warunkowa |
-| | 🧱 / 🛑 | `LBRACE` / `RBRACE` | Początek i koniec bloku instrukcji |
-| | 🔚 | `NEWLINE` | Znak nowej linii / koniec instrukcji |
-| | 🏁 | `EXIT` | Zakończenie pracy programu |
-| **Nawiasy** | `(` / `)` | `LPAREN` / `RPAREN` | Nawiasy grupujące w wyrażeniach |
+| | 🧱 / 🛑 | `LBRACE` / `RBRACE` | Początek / Koniec bloku |
+| **Funkcje** | 🎁 | `FUNC_DEF` | Definicja funkcji |
+| | 🎈 | `CALL` | Wywołanie funkcji |
+| | ↪️ | `RETURN` | Zwrócenie wartości |
+| **Listy** | 📂 / 📁 | `LBRACKET` / `RBRACKET` | Definicja listy |
+| | 🎯 | `AT` | Dostęp przez indeks |
+| | 🖇️ | `APPEND` | Dodanie elementu |
+| **I/O** | 📢 / 📥 | `PRINT` / `INPUT` | Wyjście / Wejście |
+| | 🔚 | `NEWLINE` | Koniec instrukcji |
 
 ---
 
 ## 4. Gramatyka języka (Format Yacc)
 
-Poniżej przedstawiono bezkontekstową gramatykę języka w notacji używanej przez generator parserów PLY (Yacc), bez definicji akcji (czysta struktura).
+Poniżej przedstawiono gramatykę bezkontekstową z zachowaniem poprawnej priorytetyzacji operatorów (od najsłabszych logicznych do najsilniejszych arytmetycznych).
 
 ```python
-# --- Sekcja: Struktura programu ---
+# --- Struktura programu ---
 program : statements
 
 statements : statement
@@ -76,75 +73,76 @@ statements : statement
 
 statement : assignment NEWLINE
           | print_stmt NEWLINE
+          | function_def
+          | function_call NEWLINE
+          | return_stmt NEWLINE
           | if_stmt
           | while_stmt
           | list_append NEWLINE
           | exit_stmt NEWLINE
           | NEWLINE
 
-assignment : ID ASSIGN expression
+# --- Funkcje i zasięg ---
+function_def : FUNC_DEF ID INPUT params RBRACE statements LBRACE
+params : ID
+       | params COMMA ID
+       | empty
 
-list_append : ID APPEND expression
+function_call : CALL ID INPUT args RBRACE
+args : expression
+     | args COMMA expression
+     | empty
 
-print_stmt : PRINT expression_list
+return_stmt : RETURN expression
 
-expression_list : expression
-                | expression_list COMMA expression
-
-# --- Sekcja: Przepływ sterowania ---
+# --- Instrukcje sterujące ---
 if_stmt : IF expression LBRACE statements RBRACE
         | IF expression LBRACE statements RBRACE ELSE LBRACE statements RBRACE
 
 while_stmt : WHILE expression LBRACE statements RBRACE
 
-exit_stmt : EXIT
+assignment : ID ASSIGN expression
 
-# --- Sekcja: Wyrażenia i Hierarchia Operatorów ---
-expression : expression PLUS term
-           | expression MINUS term
-           | expression OR term
+# --- Wyrażenia i Precedencja Operatorów ---
+expression : expression OR and_expr
+           | and_expr
+
+and_expr : and_expr AND condition
+         | condition
+
+condition : arithmetic EQ arithmetic
+          | arithmetic NEQ arithmetic
+          | arithmetic LT arithmetic
+          | arithmetic GT arithmetic
+          | arithmetic
+
+arithmetic : arithmetic PLUS term
+           | arithmetic MINUS term
            | term
 
-term : term MULTIPLY factor
-     | term DIVIDE factor
-     | term AND factor
+term : term MULT factor
+     | term DIV factor
      | factor
 
-factor : factor EQ comparison
-       | factor NEQ comparison
-       | factor LT comparison
-       | factor GT comparison
-       | factor LE comparison
-       | factor GE comparison
-       | comparison
+factor : NOT factor
+       | LPAREN expression RPAREN
+       | NUMBER
+       | STRING
+       | ID
+       | TRUE
+       | FALSE
+       | function_call
+       | list_access
+       | list_len
+       | casting_op
+       | input_op
 
-# --- Sekcja: Operandy i funkcje wbudowane ---
-comparison : LPAREN expression RPAREN
-           | NOT comparison
-           | NUMBER
-           | STRING
-           | ID
-           | TRUE
-           | FALSE
-           | list_literal
-           | list_access
-           | list_len
-           | casting_op
-           | input_op
-
+# --- Operacje na listach ---
 list_literal : LBRACKET expression_list RBRACKET
              | LBRACKET RBRACKET
 
 list_access : ID AT expression
-
-list_len : LEN ID
-
-casting_op : INT_CAST LPAREN expression RPAREN
-           | FLOAT_CAST LPAREN expression RPAREN
-           | STR_CAST LPAREN expression RPAREN
-
-input_op : INPUT LPAREN expression RPAREN
-         | INPUT LPAREN RPAREN
+list_append : ID APPEND expression
 ```
 
 ---
