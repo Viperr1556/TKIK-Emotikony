@@ -54,7 +54,11 @@ t_EXIT       = r'🏁'
 t_LPAREN     = r'\('
 t_RPAREN     = r'\)'
 
-t_ignore = ' \t'
+t_ignore = ' \t\r'
+
+def t_ignore_enter(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -76,11 +80,10 @@ def t_COMMENT(t):
 
 def t_NEWLINE(t):
     r'🔚'
-    t.lexer.lineno += 1
     return t
 
 def t_error(t):
-    print(f"Błąd leksykalny w linii {t.lexer.lineno}: Nieznany symbol '{t.value[0]}'")
+    print(f"🔥 Błąd leksykalny w linii {t.lexer.lineno}: Nieznany symbol '{t.value[0]}'")
     t.lexer.skip(1)
 
 lexer = lex.lex()
