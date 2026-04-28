@@ -1,91 +1,108 @@
-# ast_nodes.py
+# Klasa Environment zarządza zasięgiem zmiennych (Globalne vs Lokalne)
+class Environment:
+    def __init__(self, parent=None):
+        self.vars = {}
+        self.parent = parent
+        
+    def set(self, name, value):
+        self.vars[name] = value
+        
+    def get(self, name):
+        if name in self.vars:
+            return self.vars[name]
+        if self.parent:
+            return self.parent.get(name)
+        raise Exception(f"Zmienna '{name}' nie została zadeklarowana.")
+
+class ReturnException(Exception):
+    def __init__(self, value):
+        self.value = value
 
 class Node:
-    def eval(self, env):
-        raise NotImplementedError
+    def eval(self, env): pass
 
 class NumberNode(Node):
-    def __init__(self, value):
-        self.value = value
-    def eval(self, env):
-        return self.value
+    def __init__(self, val): self.val = val
+    def eval(self, env): return self.val
 
 class StringNode(Node):
-    def __init__(self, value):
-        self.value = value
-    def eval(self, env):
-        return self.value
+    def __init__(self, val): self.val = val
+    def eval(self, env): return self.val
 
-class BooleanNode(Node):
-    def __init__(self, value):
-        self.value = value
-    def eval(self, env):
-        return self.value
+class ListNode(Node):
+    def __init__(self, elements): self.elements = elements
+    def eval(self, env): return [e.eval(env) for e in self.elements]
 
 class VarNode(Node):
-    def __init__(self, name):
-        self.name = name
-    def eval(self, env):
-        if self.name in env:
-            return env[self.name]
-        print(f"🔥 Błąd wykonania: Zmienna '{self.name}' nie jest zdefiniowana.")
-        return 0
+    def __init__(self, name): self.name = name
+    def eval(self, env): return env.get(self.name)
 
 class AssignNode(Node):
-    def __init__(self, name, expr):
-        self.name = name
-        self.expr = expr
+    def __init__(self, name, expr): self.name, self.expr = name, expr
     def eval(self, env):
-        value = self.expr.eval(env)
-        env[self.name] = value
-        return value
+        val = self.expr.eval(env)
+        env.set(self.name, val)
+        return val
 
 class BinOpNode(Node):
-    def __init__(self, left, op, right):
-        self.left = left
-        self.op = op
-        self.right = right
+    def __init__(self, left, op, right): self.left, self.op, self.right = left, op, right
     def eval(self, env):
-        l_val = self.left.eval(env)
-        r_val = self.right.eval(env)
-        if self.op == '➕': return l_val + r_val
-        if self.op == '➖': return l_val - r_val
-        if self.op == '✖️': return l_val * r_val
-        if self.op == '➗': 
-            if r_val == 0: 
-                print("🔥 Błąd: Dzielenie przez zero!")
-                return 0
-            return l_val / r_val
-        # Operatory porównania
-        if self.op == '⚖️': return l_val == r_val
-        if self.op == '💔': return l_val != r_val
-        if self.op == '👈': return l_val < r_val
-        if self.op == '👉': return l_val > r_val
-        return 0
-
-class PrintNode(Node):
-    def __init__(self, expr):
-        self.expr = expr
-    def eval(self, env):
-        result = self.expr.eval(env)
-        print(result)
+        l = self.left.eval(env) if self.left else None
+        r = self.right.eval(env)
+        if self.op == '➕': return l + r
+        if self.op == '➖': return l - r
+        if self.op == '✖️': return l * r
+        if self.op == '➗': return l / r
+        if self.op == '⚖️': return l == r
+        if self.op == '💔': return l != r
+        if self.op == '👈': return l < r
+        if self.op == '👉': return l > r
+        if self.op == 'NOT': return not r
+        return None
 
 class BlockNode(Node):
-    def __init__(self, statements):
-        self.statements = statements
+    def __init__(self, stmts): self.stmts = stmts
     def eval(self, env):
-        result = None
-        for stmt in self.statements:
-            result = stmt.eval(env)
-        return result
+        for s in self.stmts: s.eval(env)
 
 class IfNode(Node):
-    def __init__(self, condition, true_block, false_block=None):
-        self.condition = condition
-        self.true_block = true_block
-        self.false_block = false_block
+    def __init__(self, cond, t_block, f_block=None): self.cond, self.t_block, self.f_block = cond, t_block, f_block
     def eval(self, env):
-        if self.condition.eval(env):
-            return self.true_block.eval(env)
-        elif self.false_block:
-            return self.false_block.eval(env)
+        if self.cond.eval(env): self.t_block.eval(env)
+        elif self.f_block: self.f_block.eval(env)
+
+class PrintNode(Node):
+    def __init__(self, exprs): self.exprs = exprs
+    def eval(self, env): print(*(e.eval(env) for e in self.exprs))
+
+# --- Obsługa Funkcji ---
+class FuncDefNode(Node):
+    def __init__(self, name, params, body):
+        self.name, self.params, self.body = name, params, body
+    def eval(self, env):
+        env.set(self.name, self)
+
+class CallNode(Node):
+    def __init__(self, name, args):
+        self.name, self.args = name, args
+    def eval(self, env):
+        func = env.get(self.name)
+        if not isinstance(func, FuncDefNode):
+            raise Exception(f"'{self.name}' nie jest funkcją.")
+        
+        local_env = Environment(parent=env) # Zasięg lokalny
+        eval_args = [a.eval(env) for a in self.args]
+        
+        for param_name, arg_val in zip(func.params, eval_args):
+            local_env.set(param_name, arg_val)
+            
+        try:
+            func.body.eval(local_env)
+        except ReturnException as ret:
+            return ret.value
+        return None
+
+class ReturnNode(Node):
+    def __init__(self, expr): self.expr = expr
+    def eval(self, env):
+        raise ReturnException(self.expr.eval(env))
