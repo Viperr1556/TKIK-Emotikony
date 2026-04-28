@@ -1,30 +1,23 @@
-# main.py
 import sys
 from parser_yacc import parser
+from ast_nodes import Environment
 
-def main():
-    if len(sys.argv) < 2:
-        print("Użycie: python main.py <plik.emo>")
-        return
-
-    filename = sys.argv[1]
+def run_interpreter(filename):
     try:
         with open(filename, 'r', encoding='utf-8') as f:
-            data = f.read()
-        
-        # Parsowanie i budowa drzewa AST
-        ast = parser.parse(data)
+            code = f.read()
+            
+        ast = parser.parse(code)
         
         if ast:
-            # Globalny kontekst zmiennych
-            env = {}
-            # Wykonanie programu
-            ast.eval(env)
+            global_env = Environment()
+            ast.eval(global_env)
             
-    except FileNotFoundError:
-        print(f"Błąd: Nie znaleziono pliku '{filename}'")
     except Exception as e:
-        print(f"Wystąpił krytyczny błąd: {e}")
+        print(f"Wystąpił błąd: {e}")
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        run_interpreter(sys.argv[1])
+    else:
+        print("Użycie: python main.py <program.emo>")
