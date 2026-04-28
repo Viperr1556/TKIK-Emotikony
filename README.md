@@ -32,78 +32,93 @@
 
 ---
 
-## 3. Opis tokenów
+## 3. Opis tokenów (Pełna Specyfikacja)
 
-Skaner języka EmoLang przetwarza znaki Unicode na tokeny. Poniższa tabela przedstawia kluczowe symbole:
+Skaner języka EmoLang przetwarza znaki Unicode oraz literały na tokeny. Został skonfigurowany tak, aby poprawnie obsługiwać symbole wielobajtowe oraz złożone operatory porównania.
 
 | Kategoria | Symbol | Token (PLY) | Opis |
 | :--- | :---: | :--- | :--- |
 | **Identyfikatory** | `abc` | `ID` | Nazwa zmiennej lub funkcji |
-| **Liczby** | `123` | `NUMBER` | Liczba (int/float) |
+| **Liczby** | `123.4` | `NUMBER` | Literał liczbowy (int/float) |
 | **Tekst** | 💬...💬 | `STRING` | Literał tekstowy |
-| **Wartości logiczne**| ✅ / ❌ | `TRUE` / `FALSE` | Prawda / Fałsz |
+| **Logika** | ✅ / ❌ | `TRUE` / `FALSE` | Prawda / Fałsz |
+| **Funkcje** | 🎁 | `FUNC_DEF` | Definicja nowej funkcji |
+| | 🎈 | `CALL` | Wywołanie funkcji |
+| | ↪️ | `RETURN` | Zwrócenie wartości z funkcji |
+| **Rzutowanie** | 🔢 / 📉 / 🔤 | `INT_CAST` / `FLOAT_CAST` / `STR_CAST` | Konwersja typu (int/float/string) |
 | **Operatory** | 📦 | `ASSIGN` | Przypisanie wartości |
-| | ➕ ➖ ✖️ ➗ | `PLUS`, `MINUS` itd. | Operacje arytmetyczne |
-| | ⚖️ 💔 👈 👉 | `EQ`, `NEQ`, `LT`, `GT` | Operatory porównania |
-| | 🔀 🔗 🚫 | `OR`, `AND`, `NOT` | Operatory logiczne |
+| | ➕ / ➖ | `PLUS` / `MINUS` | Dodawanie / Odejmowanie |
+| | ✖️ / ➗ | `MULTIPLY` / `DIVIDE` | Mnożenie / Dzielenie |
+| | 🔀 / 🔗 / 🚫 | `OR` / `AND` / `NOT` | Operatory logiczne |
+| **Porównania** | ⚖️ / 💔 | `EQ` / `NEQ` | Równe / Różne |
+| | 👈 / 👉 | `LT` / `GT` | Mniejsze / Większe |
+| | 👈⚖️ / 👉⚖️ | `LE` / `GE` | Mniejsze równe / Większe równe |
+| **Listy** | 📂 / 📁 | `LBRACKET` / `RBRACKET` | Definicja listy |
+| | 🎯 | `AT` | Dostęp do elementu przez indeks |
+| | 📏 | `LEN` | Pobranie długości listy lub tekstu |
+| | 🖇️ | `APPEND` | Dodanie elementu na koniec listy |
 | **Sterowanie** | ❓ / 💡 | `IF` / `ELSE` | Instrukcja warunkowa |
 | | 🔁 | `WHILE` | Pętla warunkowa |
-| | 🧱 / 🛑 | `LBRACE` / `RBRACE` | Początek / Koniec bloku |
-| **Funkcje** | 🎁 | `FUNC_DEF` | Definicja funkcji |
-| | 🎈 | `CALL` | Wywołanie funkcji |
-| | ↪️ | `RETURN` | Zwrócenie wartości |
-| **Listy** | 📂 / 📁 | `LBRACKET` / `RBRACKET` | Definicja listy |
-| | 🎯 | `AT` | Dostęp przez indeks |
-| | 🖇️ | `APPEND` | Dodanie elementu |
-| **I/O** | 📢 / 📥 | `PRINT` / `INPUT` | Wyjście / Wejście |
+| | 🧱 / 🛑 | `LBRACE` / `RBRACE` | Początek i koniec bloku kodu |
+| **I/O i Inne** | 📢 / 📥 | `PRINT` / `INPUT` | Wyjście / Wejście danych |
+| | 📍 | `COMMA` | Separator argumentów / elementów |
 | | 🔚 | `NEWLINE` | Koniec instrukcji |
+| | 🏁 | `EXIT` | Zakończenie pracy programu |
+| | `(` / `)` | `LPAREN` / `RPAREN` | Nawiasy grupujące |
 
 ---
 
 ## 4. Gramatyka języka (Format Yacc)
 
-Poniżej przedstawiono gramatykę bezkontekstową z zachowaniem poprawnej priorytetyzacji operatorów (od najsłabszych logicznych do najsilniejszych arytmetycznych).
+Poniższa gramatyka definiuje strukturę języka EmoLang, uwzględniając priorytety operatorów oraz zagnieżdżone struktury sterujące i funkcje.
 
 ```python
-# --- Struktura programu ---
+# --- Sekcja: Struktura główna ---
 program : statements
 
-statements : statement
-           | statements statement
+statements : statements statement
+           | statement
 
 statement : assignment NEWLINE
           | print_stmt NEWLINE
           | function_def
-          | function_call NEWLINE
           | return_stmt NEWLINE
           | if_stmt
           | while_stmt
-          | list_append NEWLINE
-          | exit_stmt NEWLINE
+          | append_stmt NEWLINE
+          | EXIT NEWLINE
           | NEWLINE
 
-# --- Funkcje i zasięg ---
+# --- Sekcja: Funkcje (Zakres lokalny) ---
 function_def : FUNC_DEF ID INPUT params RBRACE statements LBRACE
-params : ID
-       | params COMMA ID
-       | empty
+             | FUNC_DEF ID INPUT RBRACE statements LBRACE
+
+params : params COMMA ID
+       | ID
 
 function_call : CALL ID INPUT args RBRACE
-args : expression
-     | args COMMA expression
-     | empty
+              | CALL ID INPUT RBRACE
+
+args : args COMMA expression
+     | expression
 
 return_stmt : RETURN expression
 
-# --- Instrukcje sterujące ---
+# --- Sekcja: Przypisanie i I/O ---
+assignment : ID ASSIGN expression
+
+print_stmt : PRINT expression_list
+
+expression_list : expression_list COMMA expression
+                | expression
+
+# --- Sekcja: Przepływ sterowania ---
 if_stmt : IF expression LBRACE statements RBRACE
         | IF expression LBRACE statements RBRACE ELSE LBRACE statements RBRACE
 
 while_stmt : WHILE expression LBRACE statements RBRACE
 
-assignment : ID ASSIGN expression
-
-# --- Wyrażenia i Precedencja Operatorów ---
+# --- Sekcja: Wyrażenia (Hierarchia Operatorów) ---
 expression : expression OR and_expr
            | and_expr
 
@@ -114,35 +129,43 @@ condition : arithmetic EQ arithmetic
           | arithmetic NEQ arithmetic
           | arithmetic LT arithmetic
           | arithmetic GT arithmetic
+          | arithmetic LE arithmetic
+          | arithmetic GE arithmetic
           | arithmetic
 
 arithmetic : arithmetic PLUS term
            | arithmetic MINUS term
            | term
 
-term : term MULT factor
-     | term DIV factor
+term : term MULTIPLY factor
+     | term DIVIDE factor
      | factor
 
 factor : NOT factor
-       | LPAREN expression RPAREN
-       | NUMBER
-       | STRING
-       | ID
-       | TRUE
-       | FALSE
-       | function_call
-       | list_access
-       | list_len
        | casting_op
-       | input_op
+       | list_op
+       | atom
 
-# --- Operacje na listach ---
-list_literal : LBRACKET expression_list RBRACKET
-             | LBRACKET RBRACKET
+# --- Sekcja: Operandy i Typy Złożone ---
+casting_op : INT_CAST LPAREN expression RPAREN
+           | FLOAT_CAST LPAREN expression RPAREN
+           | STR_CAST LPAREN expression RPAREN
 
-list_access : ID AT expression
-list_append : ID APPEND expression
+list_op : LBRACKET expression_list RBRACKET
+        | LBRACKET RBRACKET
+        | ID AT expression
+        | LEN ID
+
+append_stmt : ID APPEND expression
+
+atom : NUMBER
+     | STRING
+     | ID
+     | TRUE
+     | FALSE
+     | function_call
+     | INPUT LPAREN RPAREN
+     | LPAREN expression RPAREN
 ```
 
 ---
