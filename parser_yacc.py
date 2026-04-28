@@ -52,7 +52,11 @@ def p_params(p):
               | ID'''
     if len(p) == 4: p[0] = p[1] + [p[3]]
     else: p[0] = [p[1]]
-
+        
+def p_expression_unary_minus(p):
+    '''expression : MINUS expression %prec NOT'''
+    p[0] = BinOpNode(NumberNode(0), '➖', p[2])
+    
 def p_return_stmt(p):
     '''return_stmt : RETURN expression'''
     p[0] = ReturnNode(p[2])
