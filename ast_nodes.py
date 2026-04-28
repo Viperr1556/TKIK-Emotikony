@@ -61,10 +61,15 @@ class BinOpNode(Node):
     def eval(self, env):
         l = self.left.eval(env) if self.left else None
         r = self.right.eval(env)
+        
+        if self.op == '➗': 
+            if r == 0:
+                raise Exception("🔥 Błąd EmoLang: Próba dzielenia przez zero!")
+            return l / r
+            
         if self.op == '➕': return l + r
         if self.op == '➖': return l - r
         if self.op == '✖️': return l * r
-        if self.op == '➗': return l / r
         if self.op == '⚖️': return l == r
         if self.op == '💔': return l != r
         if self.op == '👈': return l < r
@@ -74,6 +79,7 @@ class BinOpNode(Node):
         if self.op == '🔗': return l and r
         if self.op == '🔀': return l or r
         if self.op == 'NOT': return not r
+        
         return None
 
 
