@@ -1,79 +1,62 @@
-# Sprawozdanie z projektu: EmoLang – Interpreter języka emotikonowego
-
-**Przedmiot:** Teoria kompilacji i kompilatory  
-**Temat projektu:** EmoLang – esoteryczny język programowania oparty na symbolach Unicode (Emoji)  
-
-**Autorzy:** 
-* **Bednarski Paweł** (e-mail: pbednarski@student.agh.edu.pl)  
-* **Czosnek Bartłomiej** (e-mail: bczosnek@student.agh.edu.pl)  
-
----
-
-# Dokumentacja Projektu: EmoLang
-
 ## 1. Założenia programu
 
 ### Ogólne cele programu
-**EmoLang** to interpreter języka dziedzinowego (DSL) z kategorii *esolangs*, w którym tradycyjna składnia tekstowa została zastąpiona zestawem symboli **Unicode (Emoji)**. Celem projektu jest stworzenie kompletnego Turingowsko języka programowania, który mimo niekonwencjonalnej formy wizualnej, oferuje zaawansowane mechanizmy informatyczne, takie jak rekurencja, dynamiczne zarządzanie listami oraz izolowane zakresy zmiennych (scope).
+Stworzenie w pełni funkcjonalnego języka dziedzinowego (z kategorii *esolangs*), w którym tradycyjna składnia tekstowa słów kluczowych została zastąpiona symbolami Unicode (Emoji). Program pozwala na obsługę zmiennych, operacji matematycznych i logicznych, instrukcji warunkowych, pętli, struktur danych (list) oraz definiowanie i wywoływanie funkcji w izolowanych środowiskach.
 
-### Charakterystyka techniczna
+### Szczegóły techniczne
 * **Rodzaj translatora:** Interpreter.
-* **Planowany wynik działania:** Odczyt kodu źródłowego z plików `.emo`, przeprowadzenie analizy leksykalnej i składniowej, budowa drzewa AST (Abstract Syntax Tree), a następnie wykonanie instrukcji w środowisku Python 3.10+.
-* **Język implementacji:** Python.
-* **Sposób realizacji skanera i parsera:** Wykorzystanie generatora **PLY (Python Lex-Yacc)**. Analiza składniowa oparta jest na parserze LALR(1).
+* **Planowany wynik działania programu:** Interpreter analizuje plik wejściowy `.emo`, buduje drzewo składniowe (AST) i wykonuje kod, prezentując na standardowym wyjściu (konsoli) wyniki działania skryptu oraz komunikaty I/O dla użytkownika.
+* **Język implementacji:** Python (3.10+).
+* **Sposób realizacji skanera i parsera:** Wykorzystanie generatora skanerów i parserów **PLY** (Python Lex-Yacc).
 
 ---
 
-## 2. Stosowane pakiety i narzędzia zewnętrzne
+## 2. Pakiety zewnętrzne
 
-* **PLY (Python Lex-Yacc)** – biblioteka implementująca narzędzia `lex` i `yacc` dla Pythona.
-* **sys (wbudowany)** – obsługa parametrów wejściowych i strumieni systemowych.
-* **Typing (wbudowany)** – zapewnienie poprawności typowania struktur drzewa AST.
+* **PLY (ply.lex, ply.yacc)** – zewnętrzna biblioteka implementująca narzędzia lex/yacc dla języka Python, użyta do analizy leksykalnej i składniowej.
 
 ---
 
-## 3. Opis tokenów (Pełna Specyfikacja)
+## 3. Opis tokenów
 
-Skaner języka EmoLang przetwarza znaki Unicode oraz literały na tokeny. Został skonfigurowany tak, aby poprawnie obsługiwać symbole wielobajtowe oraz złożone operatory porównania.
+Skaner zamienia ciągi znaków (w tym wielobajtowe symbole Unicode) na następujące tokeny:
 
-| Kategoria | Symbol | Token (PLY) | Opis |
+| Kategoria | Symbol / Format | Token (PLY) | Opis |
 | :--- | :---: | :--- | :--- |
-| **Identyfikatory** | `abc` | `ID` | Nazwa zmiennej lub funkcji |
-| **Liczby** | `123.4` | `NUMBER` | Literał liczbowy (int/float) |
-| **Tekst** | 💬...💬 | `STRING` | Literał tekstowy |
-| **Logika** | ✅ / ❌ | `TRUE` / `FALSE` | Prawda / Fałsz |
-| **Funkcje** | 🎁 | `FUNC_DEF` | Definicja nowej funkcji |
-| | 🎈 | `CALL` | Wywołanie funkcji |
-| | ↪️ | `RETURN` | Zwrócenie wartości z funkcji |
-| **Rzutowanie** | 🔢 / 📉 / 🔤 | `INT_CAST` / `FLOAT_CAST` / `STR_CAST` | Konwersja typu (int/float/string) |
-| **Operatory** | 📦 | `ASSIGN` | Przypisanie wartości |
-| | ➕ / ➖ | `PLUS` / `MINUS` | Dodawanie / Odejmowanie |
-| | ✖️ / ➗ | `MULTIPLY` / `DIVIDE` | Mnożenie / Dzielenie |
-| | 🔀 / 🔗 / 🚫 | `OR` / `AND` / `NOT` | Operatory logiczne |
+| **Typy i zmienne** | `[a-zA-Z_]...` | `ID` | Nazwa zmiennej lub funkcji |
+| | `[0-9]+...` | `NUMBER` | Wartość liczbowa (całkowita lub zmiennoprzecinkowa) |
+| | 💬 *tekst* 💬 | `STRING` | Literał tekstowy |
+| | ✅ / ❌ | `TRUE` / `FALSE` | Wartości logiczne Prawda / Fałsz |
+| **Konwersja typów** | 🔢 / 📉 / 🔤 | `INT_CAST` / `FLOAT_CAST` / `STR_CAST` | Rzutowanie na int / float / string |
+| **Operatory** | 📦 | `ASSIGN` | Przypisanie wartości do zmiennej |
+| | ➕ / ➖ / ✖️ / ➗ | `PLUS` / `MINUS` / `MULTIPLY` / `DIVIDE` | Operatory arytmetyczne |
+| | 🔀 / 🔗 / 🚫 | `OR` / `AND` / `NOT` | Operatory logiczne (LUB, I, NIE) |
 | **Porównania** | ⚖️ / 💔 | `EQ` / `NEQ` | Równe / Różne |
 | | 👈 / 👉 | `LT` / `GT` | Mniejsze / Większe |
-| | 👈⚖️ / 👉⚖️ | `LE` / `GE` | Mniejsze równe / Większe równe |
-| **Listy** | 📂 / 📁 | `LBRACKET` / `RBRACKET` | Definicja listy |
-| | 🎯 | `AT` | Dostęp do elementu przez indeks |
-| | 📏 | `LEN` | Pobranie długości listy lub tekstu |
+| | 👈⚖️ / 👉⚖️ | `LE` / `GE` | Mniejsze lub równe / Większe lub równe |
+| **Listy**| 📂 / 📁 | `LBRACKET` / `RBRACKET` | Otwarcie / zamknięcie definicji listy |
+| | 🎯 | `AT` | Pobranie elementu z listy pod indeksem |
+| | 📏 | `LEN` | Długość listy (lub tekstu) |
 | | 🖇️ | `APPEND` | Dodanie elementu na koniec listy |
 | **Sterowanie** | ❓ / 💡 | `IF` / `ELSE` | Instrukcja warunkowa |
 | | 🔁 | `WHILE` | Pętla warunkowa |
-| | 🧱 / 🛑 | `LBRACE` / `RBRACE` | Początek i koniec bloku kodu |
-| **I/O i Inne** | 📢 / 📥 | `PRINT` / `INPUT` | Wyjście / Wejście danych |
-| | 📍 | `COMMA` | Separator argumentów / elementów |
-| | 🔚 | `NEWLINE` | Koniec instrukcji |
-| | 🏁 | `EXIT` | Zakończenie pracy programu |
-| | `(` / `)` | `LPAREN` / `RPAREN` | Nawiasy grupujące |
+| | 🧱 / 🛑 | `LBRACE` / `RBRACE` | Początek / koniec bloku instrukcji |
+| **Funkcje** | 🎁 | `FUNC_DEF` | Definicja funkcji |
+| | 🎈 | `CALL` | Wywołanie funkcji |
+| | ↪️ | `RETURN` | Zwrócenie wartości z funkcji |
+| **I/O i znaki** | 📢 / 📥 | `PRINT` / `INPUT` | Wyjście (print) / Wejście (input) |
+| | 📍 | `COMMA` | Separator argumentów (przecinek) |
+| | `(` / `)` | `LPAREN` / `RPAREN` | Nawiasy grupujące wyrażenia |
+| | 🔚 | `NEWLINE` | Koniec linii / instrukcji |
+| | 🏁 | `EXIT` | Zakończenie pracy skryptu |
 
 ---
 
-## 4. Gramatyka języka (Format Yacc)
+## 4. Gramatyka formatu
 
-Poniższa gramatyka definiuje strukturę języka EmoLang, uwzględniając priorytety operatorów oraz zagnieżdżone struktury sterujące i funkcje.
+Poniżej znajduje się czysta gramatyka w notacji generatora Yacc (PLY), opisująca strukturę języka (bez akcji semantycznych). Zastosowano hierarchię priorytetów operatorów, aby zapobiec konfliktom *shift/reduce*.
 
-```python
-# --- Sekcja: Struktura główna ---
+```text
 program : statements
 
 statements : statements statement
@@ -83,28 +66,21 @@ statement : assignment NEWLINE
           | print_stmt NEWLINE
           | function_def
           | return_stmt NEWLINE
+          | expression NEWLINE
           | if_stmt
           | while_stmt
           | append_stmt NEWLINE
           | EXIT NEWLINE
           | NEWLINE
 
-# --- Sekcja: Funkcje (Zakres lokalny) ---
-function_def : FUNC_DEF ID INPUT params RBRACE statements LBRACE
-             | FUNC_DEF ID INPUT RBRACE statements LBRACE
+function_def : FUNC_DEF ID INPUT LPAREN params RPAREN LBRACE statements RBRACE
+             | FUNC_DEF ID INPUT LPAREN RPAREN LBRACE statements RBRACE
 
 params : params COMMA ID
        | ID
 
-function_call : CALL ID INPUT args RBRACE
-              | CALL ID INPUT RBRACE
-
-args : args COMMA expression
-     | expression
-
 return_stmt : RETURN expression
 
-# --- Sekcja: Przypisanie i I/O ---
 assignment : ID ASSIGN expression
 
 print_stmt : PRINT expression_list
@@ -112,84 +88,66 @@ print_stmt : PRINT expression_list
 expression_list : expression_list COMMA expression
                 | expression
 
-# --- Sekcja: Przepływ sterowania ---
 if_stmt : IF expression LBRACE statements RBRACE
         | IF expression LBRACE statements RBRACE ELSE LBRACE statements RBRACE
 
 while_stmt : WHILE expression LBRACE statements RBRACE
 
-# --- Sekcja: Wyrażenia (Hierarchia Operatorów) ---
-expression : expression OR and_expr
-           | and_expr
-
-and_expr : and_expr AND condition
-         | condition
-
-condition : arithmetic EQ arithmetic
-          | arithmetic NEQ arithmetic
-          | arithmetic LT arithmetic
-          | arithmetic GT arithmetic
-          | arithmetic LE arithmetic
-          | arithmetic GE arithmetic
-          | arithmetic
-
-arithmetic : arithmetic PLUS term
-           | arithmetic MINUS term
-           | term
-
-term : term MULTIPLY factor
-     | term DIVIDE factor
-     | factor
-
-factor : NOT factor
-       | casting_op
-       | list_op
-       | atom
-
-# --- Sekcja: Operandy i Typy Złożone ---
-casting_op : INT_CAST LPAREN expression RPAREN
-           | FLOAT_CAST LPAREN expression RPAREN
-           | STR_CAST LPAREN expression RPAREN
-
-list_op : LBRACKET expression_list RBRACKET
-        | LBRACKET RBRACKET
-        | ID AT expression
-        | LEN ID
-
 append_stmt : ID APPEND expression
 
-atom : NUMBER
-     | STRING
-     | ID
-     | TRUE
-     | FALSE
-     | function_call
-     | INPUT LPAREN RPAREN
-     | LPAREN expression RPAREN
-```
+expression : expression PLUS expression
+           | expression MINUS expression
+           | expression MULTIPLY expression
+           | expression DIVIDE expression
+           | expression EQ expression
+           | expression NEQ expression
+           | expression LT expression
+           | expression GT expression
+           | expression LE expression
+           | expression GE expression
+           | expression AND expression
+           | expression OR expression
+           | NOT expression
+           | INT_CAST LPAREN expression RPAREN
+           | FLOAT_CAST LPAREN expression RPAREN
+           | STR_CAST LPAREN expression RPAREN
+           | LBRACKET expression_list RBRACKET
+           | LBRACKET RBRACKET
+           | expression AT expression
+           | LEN expression
+           | CALL ID INPUT LPAREN args RPAREN
+           | CALL ID INPUT LPAREN RPAREN
+           | INPUT LPAREN RPAREN
+           | LPAREN expression RPAREN
+           | NUMBER
+           | STRING
+           | TRUE
+           | FALSE
+           | ID
 
+args : args COMMA expression
+     | expression
+```
 ---
 
 ## 5. Krótka instrukcja obsługi
 
-1. **Wymagania wstępne:** Zainstalowany Python w wersji minimum 3.10.
-2. **Instalacja zależności:** Przed uruchomieniem interpretera należy zainstalować bibliotekę PLY.
+1. Upewnij się, że w systemie zainstalowany jest Python (wersja minimum 3.10).
+2. Zainstaluj wymaganą bibliotekę generującą parser PLY:
    ```bash
    pip install ply
    ```
-3. **Przygotowanie skryptu:** Kod w języku EmoLang należy zapisać w pliku tekstowym z kodowaniem UTF-8 i rozszerzeniem `.emo` (np. `skrypt.emo`).
-4. **Uruchomienie interpretera:** Program uruchamia się z poziomu wiersza poleceń, przekazując ścieżkę do pliku ze skryptem jako pierwszy argument:
+3. Zapisz swój kod źródłowy w pliku tekstowym z rozszerzeniem `.emo` (koniecznie w kodowaniu UTF-8, ze względu na wykorzystanie symboli Emoji).
+4. Uruchom interpreter z poziomu wiersza poleceń, podając ścieżkę do skryptu:
    ```bash
-   python emoti_interpreter.py skrypt.emo
+   python main.py skrypt.emo
    ```
-
 ---
 
 ## 6. Przykład użycia
 
-Poniższy skrypt (`demo.emo`) prezentuje pełnię możliwości języka: inicjalizację zmiennych, pobieranie danych od użytkownika, działanie pętli warunkowej (iterowanie, rzutowanie typu i dodawanie do listy) oraz sprawdzanie warunku.
+Kod w pliku `demo.emo`, prezentujący pobieranie danych od użytkownika, rzutowanie typów, działanie pętli, modyfikację listy oraz instrukcję warunkową:
 
-**Plik `demo.emo`:**
 ```text
 # --- Inicjalizacja programu ---
 📢 💬 Witaj w EmoLang! Ile liczb chcesz zapisac w liscie? 💬 🔚
