@@ -1,0 +1,13 @@
+liczby 📦 📂 10 📍 20 📍 30 📍 40 📁 🔚
+dlugosc 📦 📏 liczby 🔚
+i 📦 0 🔚
+suma 📦 0 🔚
+
+🔁 i 👈 dlugosc 🧱
+    element 📦 liczby 🎯 i 🔚
+    suma 📦 suma ➕ element 🔚
+    i 📦 i ➕ 1 🔚
+🛑
+
+📢 💬 Suma elementow tablicy to: 💬 📍 suma 🔚
+🏁 🔚
