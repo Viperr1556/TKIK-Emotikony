@@ -133,16 +133,50 @@ args : args COMMA expression
 ## 5. Krótka instrukcja obsługi
 
 1. Upewnij się, że w systemie zainstalowany jest Python (wersja minimum 3.10).
-2. Zainstaluj wymaganą bibliotekę generującą parser PLY:
+
+2. Zainstaluj wymagane biblioteki:
+
    ```bash
-   pip install ply
+   pip install ply flask
    ```
-3. Zapisz swój kod źródłowy w pliku tekstowym z rozszerzeniem `.emo` (koniecznie w kodowaniu UTF-8, ze względu na wykorzystanie symboli Emoji).
-4. Uruchom interpreter z poziomu wiersza poleceń, podając ścieżkę do skryptu:
-   ```bash
-   python main.py skrypt.emo
-   ```
----
+
+3. Zapisz swój kod źródłowy w pliku tekstowym z rozszerzeniem `.emo`
+   (koniecznie w kodowaniu UTF-8, ze względu na wykorzystanie symboli Emoji).
+
+4. Interpreter można uruchomić na dwa sposoby:
+
+### Tryb konsolowy
+
+Uruchom interpreter z poziomu wiersza poleceń, podając ścieżkę do skryptu:
+
+```bash
+python main.py skrypt.emo
+```
+
+### Tryb Web UI (zalecany)
+
+Projekt zawiera prosty interfejs webowy oparty na Flask, umożliwiający:
+
+* wybór plików `.emo` z poziomu przeglądarki,
+* uruchamianie programów bez używania terminala,
+* podawanie danych wejściowych dla funkcji `input()`,
+* podgląd wyników interpretera w czasie rzeczywistym.
+
+Uruchom interfejs poleceniem:
+
+```bash
+python web_ui.py
+```
+
+Następnie otwórz w przeglądarce:
+
+```text
+http://127.0.0.1:5000
+```
+
+Po uruchomieniu strony można wybierać przykładowe programy `.emo`,
+wprowadzać dane wejściowe oraz obserwować wynik działania interpretera.
+
 
 ## 6. Przykład użycia
 
