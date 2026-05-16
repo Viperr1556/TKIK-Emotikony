@@ -56,78 +56,157 @@ Skaner zamienia ciągi znaków (w tym wielobajtowe symbole Unicode) na następuj
 
 Poniżej znajduje się czysta gramatyka w notacji generatora Yacc (PLY), opisująca strukturę języka (bez akcji semantycznych). Zastosowano hierarchię priorytetów operatorów, aby zapobiec konfliktom *shift/reduce*.
 
-```text
-program : statements
+```yacc
+%token FUNC_DEF RETURN IF ELSE WHILE PRINT INPUT
+%token TRUE FALSE EXIT
+%token INT_CAST FLOAT_CAST STR_CAST LEN
+%token APPEND CALL
+%token ID NUMBER STRING
+%token PLUS MINUS MULTIPLY DIVIDE
+%token EQ NEQ LT GT LE GE
+%token AND OR NOT
+%token ASSIGN
+%token LPAREN RPAREN
+%token LBRACE RBRACE
+%token LBRACKET RBRACKET
+%token COMMA NEWLINE
+%token AT
 
-statements : statements statement
-           | statement
+/* Priorytety operatorów */
+%left OR
+%left AND
+%left EQ NEQ LT GT LE GE
+%left PLUS MINUS
+%left MULTIPLY DIVIDE
+%right NOT
 
-statement : assignment NEWLINE
-          | print_stmt NEWLINE
-          | function_def
-          | return_stmt NEWLINE
-          | expression NEWLINE
-          | if_stmt
-          | while_stmt
-          | append_stmt NEWLINE
-          | EXIT NEWLINE
-          | NEWLINE
+%%
 
-function_def : FUNC_DEF ID INPUT LPAREN params RPAREN LBRACE statements RBRACE
-             | FUNC_DEF ID INPUT LPAREN RPAREN LBRACE statements RBRACE
+/* Korzeń gramatyki */
+program
+    : statements
+    ;
 
-params : params COMMA ID
-       | ID
+/* Lista instrukcji */
+statements
+    : statements statement
+    | statement
+    ;
 
-return_stmt : RETURN expression
+/* Instrukcje */
+statement
+    : assignment NEWLINE
+    | print_stmt NEWLINE
+    | function_def
+    | return_stmt NEWLINE
+    | expression NEWLINE
+    | if_stmt
+    | while_stmt
+    | append_stmt NEWLINE
+    | EXIT NEWLINE
+    | NEWLINE
+    ;
 
-assignment : ID ASSIGN expression
+/* Definicja funkcji */
+function_def
+    : FUNC_DEF ID INPUT LPAREN params RPAREN LBRACE statements RBRACE
+    | FUNC_DEF ID INPUT LPAREN RPAREN LBRACE statements RBRACE
+    ;
 
-print_stmt : PRINT expression_list
+/* Parametry funkcji */
+params
+    : params COMMA ID
+    | ID
+    ;
 
-expression_list : expression_list COMMA expression
-                | expression
+/* Return */
+return_stmt
+    : RETURN expression
+    ;
 
-if_stmt : IF expression LBRACE statements RBRACE
-        | IF expression LBRACE statements RBRACE ELSE LBRACE statements RBRACE
+/* Przypisanie */
+assignment
+    : ID ASSIGN expression
+    ;
 
-while_stmt : WHILE expression LBRACE statements RBRACE
+/* Print */
+print_stmt
+    : PRINT expression_list
+    ;
 
-append_stmt : ID APPEND expression
+/* Lista wyrażeń */
+expression_list
+    : expression_list COMMA expression
+    | expression
+    ;
 
-expression : expression PLUS expression
-           | expression MINUS expression
-           | expression MULTIPLY expression
-           | expression DIVIDE expression
-           | expression EQ expression
-           | expression NEQ expression
-           | expression LT expression
-           | expression GT expression
-           | expression LE expression
-           | expression GE expression
-           | expression AND expression
-           | expression OR expression
-           | NOT expression
-           | INT_CAST LPAREN expression RPAREN
-           | FLOAT_CAST LPAREN expression RPAREN
-           | STR_CAST LPAREN expression RPAREN
-           | LBRACKET expression_list RBRACKET
-           | LBRACKET RBRACKET
-           | expression AT expression
-           | LEN expression
-           | CALL ID INPUT LPAREN args RPAREN
-           | CALL ID INPUT LPAREN RPAREN
-           | INPUT LPAREN RPAREN
-           | LPAREN expression RPAREN
-           | NUMBER
-           | STRING
-           | TRUE
-           | FALSE
-           | ID
+/* Instrukcja IF */
+if_stmt
+    : IF expression LBRACE statements RBRACE
+    | IF expression LBRACE statements RBRACE ELSE LBRACE statements RBRACE
+    ;
 
-args : args COMMA expression
-     | expression
+/* Pętla WHILE */
+while_stmt
+    : WHILE expression LBRACE statements RBRACE
+    ;
+
+/* Dodawanie do listy */
+append_stmt
+    : ID APPEND expression
+    ;
+
+/* Wyrażenia */
+expression
+    : expression PLUS expression
+    | expression MINUS expression
+    | expression MULTIPLY expression
+    | expression DIVIDE expression
+
+    | expression EQ expression
+    | expression NEQ expression
+    | expression LT expression
+    | expression GT expression
+    | expression LE expression
+    | expression GE expression
+
+    | expression AND expression
+    | expression OR expression
+    | NOT expression
+
+    | INT_CAST LPAREN expression RPAREN
+    | FLOAT_CAST LPAREN expression RPAREN
+    | STR_CAST LPAREN expression RPAREN
+
+    | LBRACKET expression_list RBRACKET
+    | LBRACKET RBRACKET
+
+    | expression AT expression
+    | LEN expression
+
+    | CALL ID INPUT LPAREN args RPAREN
+    | CALL ID INPUT LPAREN RPAREN
+
+    | INPUT LPAREN RPAREN
+
+    | LPAREN expression RPAREN
+
+    | NUMBER
+    | STRING
+    | TRUE
+    | FALSE
+    | ID
+    ;
+
+/* Argumenty funkcji */
+args
+    : args COMMA expression
+    | expression
+    ;
+
+%%
 ```
+
 ---
 
 ## 5. Krótka instrukcja obsługi
