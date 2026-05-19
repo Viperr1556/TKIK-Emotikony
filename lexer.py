@@ -81,9 +81,23 @@ def t_COMMENT(t):
 def t_NEWLINE(t):
     r'🔚'
     return t
+    
+def find_column(input_text, token):
+    last_newline = input_text.rfind('\n', 0, token.lexpos)
 
+    if last_newline < 0:
+        last_newline = -1
+
+    return token.lexpos - last_newline
+    
 def t_error(t):
-    print(f"🔥 Błąd leksykalny w linii {t.lexer.lineno}: Nieznany symbol '{t.value[0]}'")
+    column = find_column(t.lexer.lexdata, t)
+
+    print(
+        f"🔥Błąd leksykalny: nieznany symbol '{t.value[0]}' "
+        f"w linii {t.lexer.lineno}, kolumna {column}"
+    )
+
     t.lexer.skip(1)
 
 lexer = lex.lex()
