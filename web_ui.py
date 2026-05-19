@@ -6,6 +6,7 @@ from unittest.mock import patch
 from flask import Flask, request, render_template_string
 
 from parser_yacc import parser
+from lexer import lexer
 from ast_nodes import Environment
 
 
@@ -130,7 +131,8 @@ def run_emo_file(filepath, user_input=""):
             return next(input_lines, "")
 
         with redirect_stdout(buffer), patch("builtins.input", fake_input):
-            ast = parser.parse(code)
+            lexer.lineno = 1
+            ast = parser.parse(code, lexer=lexer)
 
             if ast:
                 global_env = Environment()
