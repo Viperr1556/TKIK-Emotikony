@@ -1,5 +1,5 @@
 import ply.yacc as yacc
-from lexer import tokens
+from lexer import tokens, lexer, find_column
 from ast_nodes import *
 
 # Pełna tabela priorytetów (rozwiązuje 24 konflikty shift/reduce)
@@ -162,7 +162,14 @@ def p_expression_atom(p):
     else: p[0] = StringNode(p[1])
 
 def p_error(p):
-    if p: print(f"🔥 Błąd składniowy przy tokenie '{p.value}' w linii {p.lineno}")
-    else: print("🔥 Błąd składniowy na końcu pliku")
+    if p:
+        column = find_column(p.lexer.lexdata, p)
+
+        print(
+            f"🔥Błąd składniowy: nieoczekiwany token '{p.value}' "
+            f"w linii {p.lineno}, kolumna {column}"
+        )
+    else:
+        print("🔥Błąd składniowy na końcu pliku")
 
 parser = yacc.yacc()
