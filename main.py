@@ -4,6 +4,7 @@ import html
 from contextlib import redirect_stdout
 
 from parser_yacc import parser
+from lexer import lexer
 from ast_nodes import Environment
 
 
@@ -56,7 +57,8 @@ def run_interpreter(filename):
             code = f.read()
 
         with redirect_stdout(buffer):
-            ast = parser.parse(code)
+            lexer.lineno = 1 
+            ast = parser.parse(code, lexer=lexer)
             if ast:
                 global_env = Environment()
                 ast.eval(global_env)
