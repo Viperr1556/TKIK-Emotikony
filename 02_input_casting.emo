@@ -1,6 +1,0 @@
-📢 💬 Podaj swoj wiek: 💬 🔚
-wiek_str 📦 📥 ( ) 🔚
-wiek 📦 🔢 ( wiek_str ) 🔚
-za_rok 📦 wiek ➕ 1 🔚
-📢 💬 Za rok bedziesz miec lat: 💬 📍 za_rok 🔚
-🏁 🔚
