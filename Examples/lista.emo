@@ -1,0 +1,14 @@
+# --- EmoLang: listy, indeksowanie, logika (bez wczytywania) ---
+
+owoce 📦 📂 💬jablko💬 📍 💬gruszka💬 📁 🔚
+owoce 🖇️ 💬sliwka💬 🔚
+
+📢 💬Lista owocow:💬 📍 owoce 🔚
+📢 💬Liczba owocow:💬 📍 📏 owoce 🔚
+📢 💬Pierwszy owoc:💬 📍 owoce 🎯 0 🔚
+
+❓ 📏 owoce 🔼 3 🔗 🚫 ❌ 🧱
+    📢 💬Mamy co najmniej trzy owoce💬 🔚
+🛑
+
+🏁 🔚

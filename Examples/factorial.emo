@@ -1,0 +1,12 @@
+# --- EmoLang: funkcja rekurencyjna (silnia) ---
+
+🎁 silnia ( n ) 🧱
+    ❓ n 🔽 1 🧱
+        🔙 1 🔚
+    🛑
+    🔙 n ✖️ 📞 silnia ( n ➖ 1 ) 🔚
+🛑
+
+wynik 📦 📞 silnia ( 5 ) 🔚
+📢 💬Silnia z 5 to:💬 📍 wynik 🔚
+🏁 🔚

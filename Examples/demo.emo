@@ -1,0 +1,28 @@
+# --- EmoLang: wczytywanie liczb, petla, lista, warunek ---
+
+📢 💬Witaj w EmoLang! Ile liczb chcesz wczytac?💬 🔚
+limit 📦 🔢 ( 📥 ) 🔚
+
+liczby 📦 📂 📁 🔚
+suma 📦 0 🔚
+i 📦 0 🔚
+
+🔁 i 👈 limit 🧱
+    📢 💬Podaj liczbe nr:💬 📍 i ➕ 1 🔚
+    n 📦 🔢 ( 📥 ) 🔚
+    liczby 🖇️ n 🔚
+    suma 📦 suma ➕ n 🔚
+    i 📦 i ➕ 1 🔚
+🛑
+
+📢 💬Twoja lista:💬 📍 liczby 🔚
+📢 💬Dlugosc listy:💬 📍 📏 liczby 🔚
+📢 💬Suma elementow:💬 📍 suma 🔚
+
+❓ suma 👉 50 🧱
+    📢 💬Wynik jest wysoki!💬 🔚
+🛑 💡 🧱
+    📢 💬Wynik jest niski.💬 🔚
+🛑
+
+🏁 🔚
