@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Maszyna wirtualna: wykonuje bajtkod na stosie.
-
-VM ma stos operandów (push/pop) i wskaźnik instrukcji (ip).
-Czyta instrukcje po kolei, wykonuje operacje na stosie.
-Pętla while to skok wstecz (JUMP), if to skok warunkowy do przodu.
-Wywołanie funkcji uruchamia nową ramkę z własnym stosem i środowiskiem.
-"""
-
 from ast_nodes import Environment, EmoError, ReturnSignal, FuncTemplate
 from compiler import (PUSH_CONST, LOAD_VAR, STORE_VAR, POP,
                       ADD, SUB, MUL, DIV, EQ, NEQ, LT, GT, LE, GE,
