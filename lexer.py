@@ -1,18 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-EmoLang - analizator leksykalny (skaner).
-
-Zadanie skanera: zamienić surowy tekst programu (ciąg znaków Unicode, w tym
-wielobajtowe emoji) na strumień TOKENÓW - najmniejszych jednostek znaczących
-języka. Tutaj jeden emoji = jeden token i pełni dokładnie jedną rolę.
-
-Używamy generatora skanerów PLY (Python Lex-Yacc), moduł `ply.lex`.
-"""
-
 import ply.lex as lex
 
-# Lista nazw wszystkich tokenów. PLY wymaga jej do zbudowania skanera
-# oraz przekazuje ją dalej do parsera.
 tokens = (
     # wartości i nazwy
     'ID', 'NUMBER', 'STRING', 'TRUE', 'FALSE',
@@ -37,10 +24,7 @@ tokens = (
     'FUNC', 'CALL', 'RETURN',
 )
 
-# --- Tokeny proste (1 emoji = 1 token) -------------------------------------
-# Reguła w formie napisu: t_NAZWA = r'wzorzec'. PLY sam dba o to, by dłuższe
-# wzorce sprawdzać przed krótszymi, więc kolejność tu nie ma znaczenia.
-
+#Tokeny proste (1 emoji = 1 token) 
 t_ASSIGN    = r'📦'          # przypisanie do zmiennej (x 📦 5)
 t_END       = r'🔚'          # koniec instrukcji (jak średnik `;`)
 t_EXIT      = r'🏁'          # koniec programu
@@ -89,21 +73,17 @@ t_RETURN    = r'🔙'          # zwróć wartość z funkcji
 t_TRUE      = r'✅'
 t_FALSE     = r'❌'
 
-# Znaki, które skaner ma po prostu pomijać (spacje, tabulatory, CR).
+# Znaki, które skaner ma po prostu pomijać (spacje, tabulatory).
 t_ignore = ' \t\r'
 
 
-# --- Tokeny złożone (reguły funkcyjne) -------------------------------------
-# Reguła w formie funkcji pozwala wykonać kod (np. konwersję typu).
-# Funkcje są próbowane w kolejności zapisania w pliku - dlatego komentarz
-# i string definiujemy przed liczbą/identyfikatorem.
-
+#Tokeny złożone (reguły funkcyjne)
 def t_COMMENT(t):
     r'\#.*'
     pass  # komentarz: nic nie zwracamy, więc token znika
 
 def t_STRING(t):
-    r'💬[^💬]*💬'           # tekst w cudzysłowach 💬 ... 💬
+    r'💬[^💬]*💬'              # tekst w cudzysłowach 💬 ... 💬
     t.value = t.value[1:-1]   # zdejmujemy znaczniki 💬 z początku i końca
     return t
 
@@ -118,10 +98,10 @@ def t_ID(t):
 
 def t_newline(t):
     r'\n+'
-    t.lexer.lineno += len(t.value)   # liczymy linie (do komunikatów o błędach)
+    t.lexer.lineno += len(t.value)   # liczymy linie do komunikatu o błędach 
 
 
-# --- Obsługa błędów leksykalnych -------------------------------------------
+#Obsługa błędów leksykalnych
 
 def find_column(input_text, token):
     """Numer kolumny tokenu w danej linii - do czytelnych komunikatów."""
@@ -132,8 +112,7 @@ def t_error(t):
     column = find_column(t.lexer.lexdata, t)
     print(f"🔥 Błąd leksykalny: nieznany symbol '{t.value[0]}' "
           f"(linia {t.lexer.lineno}, kolumna {column})")
-    t.lexer.skip(1)   # pomijamy zły znak i próbujemy dalej
+    t.lexer.skip(1)   #pominiemy zły znak i próbujemy przejść dalej 
 
 
-# Budujemy gotowy skaner. PLY analizuje powyższe definicje i tworzy automat.
 lexer = lex.lex()
