@@ -1,10 +1,4 @@
-# -*- coding: utf-8 -*-
-"""Kompilator: zamienia drzewo AST na bajtkod (listę instrukcji).
 
-Każda instrukcja to para (kod_operacji, argument).
-Kompilator obchodzi drzewo i zamiast wykonywać operacje,
-zapisuje je jako instrukcje do późniejszego wykonania przez VM.
-"""
 
 from ast_nodes import *
 
