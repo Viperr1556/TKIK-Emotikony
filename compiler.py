@@ -1,5 +1,3 @@
-
-
 from ast_nodes import *
 
 # --- Kody operacji (bajtkod) ---
