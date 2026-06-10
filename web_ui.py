@@ -1,16 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-EmoLang - interfejs webowy (Flask).
-
-Uruchomienie:
-    python web_ui.py
-a następnie w przeglądarce:  http://127.0.0.1:5000
-
-Pozwala pisać kod .emo bez kopiowania emoji (klikalna paleta), podać dane
-wejściowe i zobaczyć wynik. Pod spodem używa tego samego interpretera co
-tryb konsolowy (interpreter.run_capture) - nic nie jest tłumaczone na Pythona.
-"""
-
 from flask import Flask, request, jsonify, render_template_string
 from interpreter import run_capture
 
