@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Węzły drzewa składniowego (AST), środowisko zmiennych, typy pomocnicze.
-
-Węzły to czyste kontenery danych — nie mają logiki wykonania.
-Wykonaniem zajmuje się maszyna wirtualna (vm.py) na podstawie
-bajtkodu wygenerowanego przez kompilator (compiler.py).
-"""
 
 
 class EmoError(Exception):
