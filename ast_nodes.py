@@ -1,5 +1,3 @@
-
-
 class EmoError(Exception):
     """Błąd wykonania programu EmoLang."""
     pass
