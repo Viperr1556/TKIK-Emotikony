@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-"""EmoLang — tryb konsolowy.  Użycie: python main.py program.emo"""
-
 import sys
 from interpreter import parse_program
 from compiler import compile_ast
