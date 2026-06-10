@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Rdzeń uruchomieniowy EmoLang.
-
-Przepływ:  tekst  →  lexer  →  tokeny  →  parser  →  AST
-           →  compiler  →  bajtkod  →  VM  →  wynik
-"""
 
 import io, sys
 
