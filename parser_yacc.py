@@ -1,30 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-EmoLang - analizator składniowy (parser).
-
-Zadanie parsera: ze strumienia tokenów (od skanera) zbudować DRZEWO
-SKŁADNIOWE (AST) zgodne z gramatyką języka. Każda reguła gramatyki ma
-"akcję" - kawałek Pythona, który tworzy odpowiedni węzeł z ast_nodes.
-
-Używamy generatora parserów PLY (Python Lex-Yacc), moduł `ply.yacc`.
-Generuje on parser typu LALR(1).
-
-STRUKTURA GRAMATYKI:
-- jednorodny poziom instrukcji: jeden `statement`, jeden wspólny `block`
-  (używany tak samo przez if/while/funkcje);
-- WARSTWOWY poziom wyrażeń: każdy priorytet operatora to osobny nieterminał
-  (or_expr -> and_expr -> not_expr -> comparison -> additive ->
-   multiplicative -> unary -> postfix -> primary). Dzięki temu priorytety i
-  łączność wynikają WPROST ZE STRUKTURY GRAMATYKI - nie potrzeba tabeli
-  `precedence`, a gramatyka jest wolna od konfliktów shift/reduce.
-"""
-
 import ply.yacc as yacc
-from lexer import tokens, find_column          # tokens są wymagane przez PLY
+from lexer import tokens, find_column          
 from ast_nodes import *
 
 
-# ===== Korzeń: program to ciąg instrukcji ==================================
+#Korzeń: program to ciąg instrukcji
 
 def p_program(p):
     'program : statements'
@@ -39,9 +18,9 @@ def p_statements(p):
         p[0] = [p[1]]
 
 
-# ===== Instrukcje ==========================================================
+#Instrukcje
 # "Proste" instrukcje kończą się znacznikiem 🔚 (END).
-# "Złożone" (if/while/funkcja) kończą się własnym blokiem 🛑 - bez 🔚.
+# "Złożone" (if/while/funkcja) kończą się własnym blokiem 🛑 .
 
 def p_statement(p):
     '''statement : assignment END
@@ -65,7 +44,7 @@ def p_block(p):
     p[0] = BlockNode(p[2]) if len(p) == 4 else BlockNode([])
 
 
-# ===== Przypisanie, wypisywanie, listy =====================================
+#Przypisanie, wypisywanie, listy
 
 def p_assignment(p):
     'assignment : ID ASSIGN expression'
@@ -80,7 +59,7 @@ def p_append_stmt(p):
     p[0] = AppendNode(p[1], p[3])
 
 
-# ===== Sterowanie ==========================================================
+#Sterowanie
 
 def p_if_stmt(p):
     '''if_stmt : IF expression block
@@ -93,7 +72,7 @@ def p_while_stmt(p):
     p[0] = WhileNode(p[2], p[3])
 
 
-# ===== Funkcje (oraz return - kontrola semantyczna) ========================
+#Funkcje
 
 def p_func_def(p):
     '''func_def : FUNC ID LPAREN params RPAREN block
@@ -113,10 +92,8 @@ def p_return_stmt(p):
     p[0] = ReturnNode(p[2])
 
 
-# ===== Wyrażenia: gramatyka WARSTWOWA ======================================
-# Każdy poziom odwołuje się tylko do poziomu wiążącego mocniej. Lewa rekurencja
-# = łączność lewostronna (a-b-c = (a-b)-c). Operatory przedrostkowe (🚫, 📏,
-# unarny ➖) i indeksowanie (🎯) mają własne poziomy. Brak tabeli precedence.
+#Wyrażenia: gramatyka WARSTWOWA
+
 
 def p_expression(p):
     'expression : or_expr'
@@ -174,7 +151,7 @@ def p_postfix(p):
     p[0] = IndexNode(p[1], p[3]) if len(p) == 4 else p[1]
 
 
-# ----- primary: wartości podstawowe i konstrukcje "domknięte" --------------
+#primary: wartości podstawowe i konstrukcje "domknięte"
 
 def p_primary_cast(p):
     'primary : NUM_CAST LPAREN expression RPAREN'
@@ -219,7 +196,7 @@ def p_primary_var(p):
     p[0] = VarNode(p[1])
 
 
-# ===== Listy argumentów / elementów ========================================
+#Listy argumentów / elementów 
 
 def p_arglist(p):
     '''arglist : arglist COMMA expression
@@ -227,8 +204,7 @@ def p_arglist(p):
     p[0] = p[1] + [p[3]] if len(p) == 4 else [p[1]]
 
 
-# ===== Błąd składniowy =====================================================
-
+#Błąd składniowy
 def p_error(p):
     if p:
         column = find_column(p.lexer.lexdata, p)
@@ -238,5 +214,4 @@ def p_error(p):
         print("🔥 Błąd składniowy: nieoczekiwany koniec programu")
 
 
-# Budujemy gotowy parser.
 parser = yacc.yacc()
