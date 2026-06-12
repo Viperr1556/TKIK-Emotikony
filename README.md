@@ -270,7 +270,7 @@ Silnia z 5 to: 120
 ```
 
 
-## 10. Inne informacje
+## 9. Inne informacje
 
 Struktura projektu:
 
