@@ -241,15 +241,36 @@ wynik 📦 📞 silnia ( 5 ) 🔚
 📢 💬Silnia z 5 to:💬 📍 wynik 🔚
 🏁 🔚
 ```
-
-Wynik: `Silnia z 5 to: 120`
-
-Pozostałe przykłady: `demo.emo` (pętla, lista, warunek, wejście),
-`lista.emo` (operacje na listach).
-
 ---
+Wyjście:
+```
+--- bajtkod ---
+   0  MAKE_FUNC              silnia(n)
+     0  LOAD_VAR               n
+     1  PUSH_CONST             1
+     2  LE
+     3  POP_JUMP_FALSE         6
+     4  PUSH_CONST             1
+     5  RETURN_VAL
+     6  LOAD_VAR               n
+     7  LOAD_VAR               n
+     8  PUSH_CONST             1
+     9  SUB
+    10  CALL_FUNC              ('silnia', 1)
+    11  MUL
+    12  RETURN_VAL
+   1  PUSH_CONST             5
+   2  CALL_FUNC              ('silnia', 1)
+   3  STORE_VAR              wynik
+   4  PUSH_CONST             Silnia z 5 to:
+   5  LOAD_VAR               wynik
+   6  PRINT                  2
+--- wynik ---
+Silnia z 5 to: 120
+```
 
-## 9. Inne informacje
+
+## 10. Inne informacje
 
 Struktura projektu:
 
