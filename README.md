@@ -229,6 +229,7 @@ python main.py demo.emo < dane.txt
 
 ## 8. Przykład użycia
 
+Wejście:
 ```
 🎁 silnia ( n ) 🧱
     ❓ n 🔽 1 🧱
